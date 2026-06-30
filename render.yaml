@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: sales-agent-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: bash start.sh
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: SERPAPI_KEY
+        sync: false
+      - key: OUTREACH_SCORE_THRESHOLD
+        value: "20"
+      - key: STALE_DAYS
+        value: "365"
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: CLEARBIT_API_KEY
+        sync: false
+      - key: HUNTER_API_KEY
+        sync: false
