@@ -72,6 +72,15 @@ def apply_icp_filter(app: dict, store: str) -> bool:
     if not has_india:
         return False
 
+    # ── Hard gate 3: block clearly non-Indian developer companies ──────────
+    # Apple's sellerName often reveals the country (e.g. "S.L." = Spanish LLC,
+    # "Ltd" alone is generic but "GmbH" = German, "B.V." = Dutch, "Inc." from US)
+    dev_name = (app.get("sellerName") or app.get("developer") or "").lower()
+    NON_INDIA_SUFFIXES = [" s.l.", " s.l", " gmbh", " b.v.", " s.r.l.", " s.a.s",
+                          " s.a.", " oy ", " ab ", " ag ", " nv ", " sarl"]
+    if any(suf in dev_name for suf in NON_INDIA_SUFFIXES):
+        return False
+
     # ── Staleness check (optional — don't block if date unknown) ───────────
     updated = (app.get("updated") or app.get("currentVersionReleaseDate")
                or app.get("releaseDate"))

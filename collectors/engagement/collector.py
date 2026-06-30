@@ -23,7 +23,8 @@ class EngagementCollector(BaseCollector):
 
     async def _collect_apple(self, app_id: str) -> dict:
         from app_store_scraper import AppStore
-        a = AppStore(country="in", app_id=app_id)
+        app_name = self.app.get("app_name") or "app"
+        a = AppStore(country="in", app_name=app_name, app_id=app_id)
         await asyncio.to_thread(a.review, how_many=200)
         return await self._analyze(a.reviews or [], date_key="date", rating_key="rating",
                                    reply_key=None, text_key="review")

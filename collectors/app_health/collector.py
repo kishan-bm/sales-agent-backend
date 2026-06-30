@@ -83,7 +83,8 @@ class AppHealthCollector(BaseCollector):
 
     async def _collect_apple(self, app_id: str) -> dict:
         from app_store_scraper import AppStore
-        a = AppStore(country="in", app_id=app_id)
+        app_name = self.app.get("app_name") or "app"
+        a = AppStore(country="in", app_name=app_name, app_id=app_id)
         await asyncio.to_thread(a.review, how_many=200)
         reviews = a.reviews or []
         clusters = self._cluster(reviews)

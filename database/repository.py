@@ -1,10 +1,13 @@
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy import select, update
+from sqlalchemy.pool import NullPool
 from .models import App, Evidence, OpportunityScore, Contact, OutreachCampaign, LLMAuditLog
 from ..utils.config import DATABASE_URL
 import uuid
 
-engine = create_async_engine(DATABASE_URL, echo=False)
+# NullPool: no connection reuse across event loops — required for Celery workers
+# where each task creates its own asyncio event loop
+engine = create_async_engine(DATABASE_URL, echo=False, poolclass=NullPool)
 AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)
 
 

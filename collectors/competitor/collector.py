@@ -51,7 +51,8 @@ class CompetitorCollector(BaseCollector):
 
         rated = [c for c in competitors if c.get("rating")]
         cat_avg = sum(c["rating"] for c in rated) / len(rated) if rated else 0.0
-        rating_gap = round(cat_avg - rating, 2)
+        # Only compute gap when we actually have competitor ratings; negative = app is better
+        rating_gap = round(cat_avg - rating, 2) if cat_avg > 0 else 0.0
         pressure = "high" if rating_gap > 1.5 else "medium" if rating_gap > 0.5 else "low"
 
         missing = await self._find_missing_features(app_name, category, competitors)
