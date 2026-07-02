@@ -9,6 +9,19 @@ fi
 export PYTHONPATH=/opt/render/project:$PYTHONPATH
 
 echo "Running DB migrations..."
+# Debug: show which DB host we're connecting to (password hidden)
+python3 -c "
+import os
+url = os.getenv('DATABASE_URL', 'NOT SET')
+if '@' in url:
+    parts = url.split('@')
+    print('DB URL host:', parts[-1])
+    creds = parts[0].split('://')[-1]
+    user = creds.split(':')[0]
+    print('DB user:', user)
+else:
+    print('DATABASE_URL:', url)
+"
 alembic upgrade head
 
 echo "Starting Celery worker in background..."
