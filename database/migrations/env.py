@@ -1,7 +1,7 @@
 import sys
 import os
 from logging.config import fileConfig
-from sqlalchemy import engine_from_config, pool
+from sqlalchemy import create_engine, pool
 from alembic import context
 
 # Make backend package importable
@@ -17,9 +17,8 @@ if config.config_file_name is not None:
 target_metadata = Base.metadata
 
 # Use sync psycopg2 URL for Alembic (swap asyncpg driver)
+# Bypass configparser entirely to avoid % interpolation issues with encoded passwords
 sync_url = DATABASE_URL.replace("postgresql+asyncpg://", "postgresql+psycopg2://")
-# configparser treats % as interpolation syntax — escape it
-config.set_main_option("sqlalchemy.url", sync_url.replace("%", "%%"))
 
 
 def run_migrations_offline():
@@ -34,11 +33,8 @@ def run_migrations_offline():
 
 
 def run_migrations_online():
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section, {}),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
+    # Create engine directly — avoids configparser % interpolation problems
+    connectable = create_engine(sync_url, poolclass=pool.NullPool)
     with connectable.connect() as connection:
         context.configure(connection=connection, target_metadata=target_metadata)
         with context.begin_transaction():
