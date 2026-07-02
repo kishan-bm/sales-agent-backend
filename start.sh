@@ -1,6 +1,12 @@
 #!/bin/bash
-# Runs FastAPI + Celery worker in the same Render container
 set -e
+
+# On Render, repo root = /opt/render/project/src (the backend code itself)
+# But all imports use 'from backend.xxx' — create a symlink so it resolves
+if [ -d /opt/render/project/src ] && [ ! -e /opt/render/project/backend ]; then
+    ln -sf /opt/render/project/src /opt/render/project/backend
+fi
+export PYTHONPATH=/opt/render/project:$PYTHONPATH
 
 echo "Running DB migrations..."
 alembic upgrade head
