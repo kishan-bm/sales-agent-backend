@@ -2,7 +2,7 @@ services:
   - type: web
     name: sales-agent-backend
     runtime: python
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install -r requirements.txt && pip install "app-store-scraper==0.3.5" --no-deps
     startCommand: bash start.sh
     envVars:
       - key: DATABASE_URL
