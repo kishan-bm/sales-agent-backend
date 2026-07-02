@@ -9,6 +9,11 @@ QUERIES = [
     "home decor india", "fitness membership india", "diet nutrition india",
     "kids learning india", "furniture brand india", "healthy snacks india",
     "hair care india brand", "face wash india brand", "health supplement india",
+    "D2C brand india", "beauty brand india", "wellness india brand",
+    "clothing brand india app", "jewellery india brand", "pet care india",
+    "personal care india", "natural products india", "herbal india brand",
+    "sports nutrition india", "ethnic wear india", "artisan india brand",
+    "grocery delivery india brand", "sustainable india brand", "tea india brand",
 ]
 
 _sem = asyncio.Semaphore(8)
@@ -39,11 +44,10 @@ async def _fetch_detail(app_id: str) -> dict | None:
         return None
 
 
-async def discover(search_limit: int = 20) -> list[dict]:
+async def discover(search_limit: int = 30) -> list[dict]:
     search_tasks = [_search_one(q, search_limit) for q in QUERIES]
     all_id_lists = await asyncio.gather(*search_tasks)
-    # Deduplicate, cap at 80 to keep discovery under 60s
-    unique_ids = list({aid for sublist in all_id_lists for aid in sublist})[:80]
+    unique_ids = list({aid for sublist in all_id_lists for aid in sublist})[:250]
 
     detail_tasks = [_fetch_detail(app_id) for app_id in unique_ids]
     results = await asyncio.gather(*detail_tasks)

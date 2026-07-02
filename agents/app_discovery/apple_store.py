@@ -21,7 +21,10 @@ QUERIES = [
     "yoga india", "ayurvedic wellness india", "skincare brand india",
     "baby products india", "organic food india", "home decor india",
     "diet nutrition india", "furniture india brand", "healthy snacks india",
-    "D2C brand india",
+    "D2C brand india", "beauty india brand", "wellness india",
+    "herbal india brand", "protein supplement india", "ethnic wear india",
+    "jewellery india", "personal care india", "natural products india",
+    "sports nutrition india", "tea india brand",
 ]
 
 _sem = asyncio.Semaphore(8)  # Allow more concurrency for speed
@@ -78,7 +81,7 @@ async def discover(search_limit: int = 30) -> list[dict]:
                 unique.append(item)
 
     # Pre-filter before expensive detail fetch — cap at 60 candidates
-    candidates = [item for item in unique if apply_icp_filter(item, "apple")][:60]
+    candidates = [item for item in unique if apply_icp_filter(item, "apple")][:120]
     detail_tasks = [_fetch_detail(item["trackId"]) for item in candidates]
     results = await asyncio.gather(*detail_tasks)
     return [r for r in results if r is not None]
